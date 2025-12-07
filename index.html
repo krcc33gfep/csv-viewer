@@ -1,151 +1,135 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSVビューワー</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSVビューア</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 1rem;
+      color: #333;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      overflow-x: hidden; /* ← 横スクロール防止 */
+    }
 
-<!-- ✅ 等幅日本語フォント -->
-<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@400;500&display=swap" rel="stylesheet">
+    h1 {
+      font-size: 1.4rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
 
-<!-- ✅ Papa Parse（CSVパーサー） -->
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    .search-box {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-<style>
-  body {
-    background: #000;
-    color: #fff;
-    font-family: "M PLUS 1 Code", monospace;
-    margin: 0;
-  }
+    input[type="text"] {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      min-width: 0;
+    }
 
-  header {
-    display: flex;
-    padding: 10px;
-    gap: 8px;
-    background: #111;
-    align-items: center;
-  }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
 
-  input[type="file"] { display: none; }
+    .row {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 0.6rem 0.8rem;
+      display: flex;
+      flex-direction: column;
+      word-break: break-word;
+    }
 
-  label {
-    background: #333;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9em;
-    white-space: nowrap;
-  }
+    .line1, .line2 {
+      display: flex;
+      justify-content: space-between;
+    }
 
-  input[type="text"] {
-    flex: 1;
-    background: #222;
-    color: #fff;
-    border: 1px solid #333;
-    border-radius: 6px;
-    padding: 8px 10px;
-    font-family: inherit;
-    font-size: 0.95em;
-  }
+    .date, .category {
+      font-size: 0.9rem;
+      color: #555;
+    }
 
-  .container { padding: 10px; }
+    .category {
+      text-align: left; /* ← 左寄せ */
+      flex: 1;
+      text-indent: 2em;
+    }
 
-  .row {
-    border-bottom: 1px solid #222;
-    padding: 8px 0;
-  }
+    .content {
+      font-size: 1rem;
+    }
 
-  .top-line, .bottom-line {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-  }
-
-  .top-line { gap: 20px; }
-
-  .date {
-    color: #aaa;
-    font-size: 0.9em;
-    width: 30%;
-    text-align: left;
-  }
-
-  .category {
-    color: #ccc;
-    font-size: 0.9em;
-    text-align: left;
-    width: 40%;
-  }
-
-  .desc {
-    flex: 1;
-    font-size: 1em;
-  }
-
-  .amount {
-    text-align: right;
-    color: #0f0;
-    min-width: 80px;
-    font-size: 1.2em;
-    font-weight: 500;
-  }
-</style>
+    .amount {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #2b7a2b;
+    }
+  </style>
 </head>
 <body>
+  <h1>CSVビューア</h1>
+  <div class="search-box">
+    <input type="text" id="search" placeholder="検索..." />
+  </div>
+  <div class="list" id="list"></div>
 
-<header>
-  <label for="fileInput">📂 開く</label>
-  <input id="fileInput" type="file" accept=".csv">
-  <input id="search" type="text" placeholder="検索...">
-</header>
+  <script>
+    let rows = [];
 
-<div class="container" id="output"></div>
+    function render(filtered) {
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+      filtered.forEach((r) => {
+        const row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML = `
+          <div class="line1">
+            <div class="date">${r[0] || ""}</div>
+            <div class="category">${r[2] || ""}</div>
+          </div>
+          <div class="line2">
+            <div class="content">${r[1] || ""}</div>
+            <div class="amount">${r[3] || ""}</div>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+    }
 
-<script>
-let rows = [];
+    // 🔹 自動で CSV を読み込む部分
+    Papa.parse("20241115.csv", {
+      download: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        rows = results.data.filter(r => r.length > 1);
+        render(rows);
+      }
+    });
 
-/* ✅ CSV読込（PapaParse使用） */
-fileInput.addEventListener("change", e => {
-  const file = e.target.files[0];
-  Papa.parse(file, {
-    complete: function(results) {
-      rows = results.data.filter(r => r.length > 1);
-      render(rows);
-    },
-    encoding: "UTF-8",
-    skipEmptyLines: true
-  });
-});
-
-/* 🔍 入力のたびに即フィルタ */
-search.addEventListener("input", () => {
-  const kw = search.value.toLowerCase().trim();
-  const filtered = rows.filter(r => r.join(",").toLowerCase().includes(kw));
-  render(filtered);
-});
-
-/* 🧱 表示処理 */
-function render(data){
-  const out = document.getElementById("output");
-  out.innerHTML = "";
-  data.forEach(r=>{
-    const el = document.createElement("div");
-    el.className = "row";
-    el.innerHTML = `
-      <div class="top-line">
-        <div class="date">${r[0] || ""}</div>
-        <div class="category">${r[2] || ""}</div>
-      </div>
-      <div class="bottom-line">
-        <div class="desc">${r[1] || ""}</div>
-        <div class="amount">${r[3] || ""}</div>
-      </div>
-    `;
-    out.appendChild(el);
-  });
-}
-</script>
-
+    // 🔹 検索機能（リアルタイム）
+    document.getElementById("search").addEventListener("input", (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      const filtered = rows.filter(r => r.join(",").toLowerCase().includes(q));
+      render(filtered);
+    });
+  </script>
 </body>
 </html>
