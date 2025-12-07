@@ -102,13 +102,21 @@
 <script>
 let rows = [];
 
-/* ✅ CSV自動読込 */
+/* ✅ CSV自動読込＆日付降順ソート */
 fetch("20241115.csv")
   .then(response => response.text())
   .then(csvText => {
     Papa.parse(csvText, {
       complete: function(results) {
         rows = results.data.filter(r => r.length > 1);
+
+        // 日付で新しい順にソート
+        rows.sort((a, b) => {
+          const dateA = new Date(a[0]);
+          const dateB = new Date(b[0]);
+          return dateB - dateA; // 降順
+        });
+
         render(rows);
       },
       skipEmptyLines: true
