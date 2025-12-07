@@ -15,13 +15,40 @@
 
   .container { padding:10px; width:100%; box-sizing:border-box; }
   .row { border-bottom:1px solid #222; padding:8px 0; word-break: break-word; }
-  .top-line, .bottom-line { display:flex; justify-content:flex-start; align-items:center; flex-wrap:wrap; }
-  .top-line { gap:10px; }
 
-  .date { color:#aaa; font-size:0.9em; width:30%; min-width:80px; text-align:left; }
-  .category { color:#ccc; font-size:0.9em; width:30%; min-width:100px; text-align:left; margin-left:3ch; } /* 右にずらす */
-  .classification { color:#ccc; font-size:0.9em; width:30%; min-width:100px; text-align:right; }
+  /* 上段：日付・カテゴリー・分類 */
+  .top-line {
+    display: flex;
+    justify-content: space-between; /* 左右を広げる */
+    align-items: center;
+    flex-wrap: wrap;
+  }
 
+  .date {
+    color:#aaa;
+    font-size:0.9em;
+    text-align:left;
+    width:30%;
+  }
+
+  .category {
+    color:#ccc;
+    font-size:0.9em;
+    width:30%;
+    text-align:left; 
+    margin-left:auto;  /* 左右マージンで中央寄せっぽく */
+    margin-right:auto;
+  }
+
+  .classification {
+    color:#ccc;
+    font-size:0.9em;
+    width:30%;
+    text-align:right;  /* 右寄せ */
+  }
+
+  /* 下段：メモ・金額 */
+  .bottom-line { display:flex; justify-content:flex-start; align-items:center; flex-wrap:wrap; }
   .desc { flex:1; font-size:1em; min-width:100px; }
   .amount { text-align:right; color:#0f0; min-width:80px; font-size:1.2em; font-weight:500; }
 </style>
@@ -40,9 +67,9 @@ let rows = [];
 /* 日本語日付文字列をDateに変換 */
 function parseJapaneseDate(str) {
   const m = str.match(/(\d+)年(\d+)月(\d+)日/);
-  if (!m) return new Date(0); // 解析失敗時は過去日付
+  if (!m) return new Date(0); 
   const year = parseInt(m[1],10);
-  const month = parseInt(m[2],10) - 1; // JSの月は0始まり
+  const month = parseInt(m[2],10) - 1; 
   const day = parseInt(m[3],10);
   return new Date(year, month, day);
 }
