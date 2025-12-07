@@ -12,13 +12,16 @@
   body { background: #000; color: #fff; font-family: "M PLUS 1 Code", monospace; margin:0; }
   header { display:flex; padding:10px; background:#111; align-items:center; justify-content:center; }
   input[type="text"] { width: calc(100% - 20px); max-width:600px; background:#222; color:#fff; border:1px solid #333; border-radius:6px; padding:8px 10px; font-size:16px; }
+
   .container { padding:10px; width:100%; box-sizing:border-box; }
   .row { border-bottom:1px solid #222; padding:8px 0; word-break: break-word; }
   .top-line, .bottom-line { display:flex; justify-content:flex-start; align-items:center; flex-wrap:wrap; }
   .top-line { gap:10px; }
+
   .date { color:#aaa; font-size:0.9em; width:30%; min-width:80px; text-align:left; }
-  .category { color:#ccc; font-size:0.9em; width:30%; min-width:100px; text-align:left; }
+  .category { color:#ccc; font-size:0.9em; width:30%; min-width:100px; text-align:left; margin-left:3ch; } /* 右にずらす */
   .classification { color:#ccc; font-size:0.9em; width:30%; min-width:100px; text-align:right; }
+
   .desc { flex:1; font-size:1em; min-width:100px; }
   .amount { text-align:right; color:#0f0; min-width:80px; font-size:1.2em; font-weight:500; }
 </style>
@@ -39,14 +42,13 @@ fetch("20241125.csv")
   .then(r => r.text())
   .then(csvText => {
     Papa.parse(csvText, {
-      header: true,       // 1行目をヘッダーとして認識
+      header: true,
       skipEmptyLines: true,
       complete: function(results) {
         rows = results.data;
 
         // 日付降順ソート
         rows.sort((a,b) => {
-          // 日付を正しくDateに変換
           const dateA = new Date(a['日付']);
           const dateB = new Date(b['日付']);
           return dateB - dateA;
