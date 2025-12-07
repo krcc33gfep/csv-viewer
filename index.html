@@ -111,7 +111,7 @@
 let rows = [];
 
 /* ✅ CSV自動読込＆日付降順ソート */
-fetch("20241125.csv") // ← ファイル名を変更
+fetch("20241125.csv")
   .then(response => response.text())
   .then(csvText => {
     Papa.parse(csvText, {
@@ -149,12 +149,12 @@ function render(data){
     el.innerHTML = `
       <div class="top-line">
         <div class="date">${r[0] || ""}</div>
-        <div class="category">${r[2] || ""}</div>
-        <div class="classification">${r[4] || ""}</div>
+        <div class="category">${r[1] || ""}</div>
+        <div class="classification">${r[2] || ""}</div>
       </div>
       <div class="bottom-line">
-        <div class="desc">${r[1] || ""}</div>
-        <div class="amount">${r[3] || ""}</div>
+        <div class="desc">${r[3] || ""}</div>
+        <div class="amount">${r[4] || ""}</div>
       </div>
     `;
     out.appendChild(el);
