@@ -15,7 +15,7 @@
   /* 🔍 検索ボックス */
   .search-wrapper {
     position: relative;
-    width: calc(100% - 20px);
+    width: 100%;
     max-width: 600px;
   }
 
@@ -25,22 +25,25 @@
     color:#fff;
     border:1px solid #333;
     border-radius:6px;
-    padding:8px 36px 8px 10px; /* ← 右側に余白を作る */
+    padding:8px 28px 8px 10px; /* ← 右側余白を小さめに戻す */
     font-size:16px;
+    box-sizing: border-box;
   }
 
-  /* ❌ クリアボタン */
+  /* ❌ クリアボタン（サイズ大きめ・位置調整） */
   .clear-btn {
     position: absolute;
-    right: 10px;
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
     color: #aaa;
-    font-size: 18px;
+    font-size: 20px;  /* ← 大きく */
+    line-height: 1;
     cursor: pointer;
     display: none;
+    padding: 0;
   }
   .clear-btn:hover { color: #fff; }
 
@@ -85,7 +88,6 @@
 <body>
 
 <header>
-  <!-- 🔍 検索欄 + ×ボタン -->
   <div class="search-wrapper">
     <input id="search" type="text" placeholder="検索（例：2024年 食費 外食）...">
     <button id="clearBtn" class="clear-btn">&times;</button>
@@ -129,13 +131,12 @@ fetch(csvUrl)
   })
   .catch(err => console.error("CSVの読み込みに失敗:", err));
 
-/* 🔍 検索イベント */
 const search = document.getElementById("search");
 const clearBtn = document.getElementById("clearBtn");
 
 search.addEventListener("input", () => {
   const keywords = search.value.toLowerCase().trim().split(/\s+/);
-  clearBtn.style.display = search.value ? "block" : "none"; // ← 入力があれば×を表示
+  clearBtn.style.display = search.value ? "block" : "none";
 
   const filtered = rows.filter(r => {
     const dateDisplay = r['日付'] ? formatDateDisplay(r['日付']) : "";
@@ -145,7 +146,6 @@ search.addEventListener("input", () => {
   render(filtered);
 });
 
-/* ❌ クリアボタン処理 */
 clearBtn.addEventListener("click", () => {
   search.value = "";
   clearBtn.style.display = "none";
