@@ -15,7 +15,7 @@
     color:#fff;
     font-family:"M PLUS Rounded 1c", sans-serif;
     margin:0;
-    font-size:17px; /* 全体を少し大きく */
+    font-size:17px;
   }
 
   header {
@@ -51,7 +51,7 @@
   }
 
   #sortButtons button:hover {
-    border-color:#0f0; /* 枠だけ色変更 */
+    border-color:#0f0;
     color:#0f0;
   }
 
@@ -71,11 +71,10 @@
     display: grid;
     grid-template-columns: 110px 1fr 1fr 110px;
     align-items: center;
-    font-size:1.05em; /* わずかに拡大 */
+    font-size:1.05em;
     color:#eee;
   }
   .line1 div { text-align: right; }
-  /* 日付と経過年月をグレーに */
   .line1 div:first-child,
   .line1 div:last-child {
     color:#aaa;
@@ -84,23 +83,23 @@
   /* 下段（line2） */
   .line2 {
     display: grid;
-    grid-template-columns: 120px 1fr 1fr 120px; /* ← 幅を少し広げて安定化 */
+    grid-template-columns: 120px 1fr 1fr 120px; /* ← 少し広めで対応 */
     align-items: center;
-    font-size:1.3em; /* ← 約30%拡大 */
+    font-size:1.3em; /* ← 30%拡大 */
     color:#eee;
   }
   .line2 div { text-align: right; }
   .line2 .highlight {
     color:#0f0;
     font-weight:600;
-    font-size:1.1em; /* 燃費を少し強調 */
+    font-size:1.1em;
   }
 
   @media (max-width:600px){
     body { font-size:15px; }
-    .line1, .line2 { font-size:0.95em; }
     #sortButtons button { font-size:15px; }
-    .line2 { grid-template-columns: 110px 1fr 1fr 110px; font-size:1.15em; } /* スマホでは控えめ */
+    /* スマホでも1.3em維持（以前の制限を解除） */
+    .line2 { font-size:1.3em; grid-template-columns: 120px 1fr 1fr 120px; }
   }
 </style>
 </head>
