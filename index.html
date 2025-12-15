@@ -87,10 +87,16 @@
     width:30%;
     text-align:right;
   }
+  
 
   .bottom-line { display:flex; justify-content:flex-start; align-items:center; flex-wrap:wrap; }
   .desc { flex:1; font-size:1em; min-width:100px; }
   .amount { text-align:right; color:#0f0; min-width:80px; font-size:1.2em; font-weight:500; }
+    /* 検索ボックスの下に更新日時を縦並びに表示 */
+  header {
+    flex-direction: column;
+  }
+
 </style>
 </head>
 <body>
@@ -202,6 +208,7 @@ function render(data){
 
 </body>
 </html>
+
 
 
 
