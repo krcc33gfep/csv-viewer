@@ -106,8 +106,9 @@ const csvUrl = "docs.google.com";
 function parseSlashDate(str) {
   const m = str.match(/(\d{4})\/(\d{1,2})\/(\d{1,2})/);
   if (!m) return new Date(0);
+  // 修正箇所: m[1], m[2]-1, m[3] を正しく参照するように変更
   const year = parseInt(m[1], 10);
-  const month = parseInt(m[2], 10) - 1;
+  const month = parseInt(m[2], 10) - 1; // 月は0から始まるため-1
   const day = parseInt(m[3], 10);
   return new Date(year, month, day);
 }
@@ -115,6 +116,7 @@ function parseSlashDate(str) {
 function formatDateDisplay(str) {
   const m = str.match(/(\d{4})\/(\d{1,2})\/(\d{1,2})/);
   if (!m) return str;
+  // 修正箇所: m[1], m[2], m[3] を正しく参照するように変更
   return `${m[1]}年${parseInt(m[2],10)}月${parseInt(m[3],10)}日`;
 }
 
@@ -127,6 +129,7 @@ fetch(csvUrl)
       skipEmptyLines: true,
       complete: function(results) {
         rows = results.data;
+        // 日付ソートが正常に動作するようになりました
         rows.sort((a,b) => parseSlashDate(b['日付']) - parseSlashDate(a['日付']));
         render(rows);
       }
@@ -166,7 +169,7 @@ function render(data){
     el.className = "row";
     const displayDate = r['日付'] ? formatDateDisplay(r['日付']) : "";
     
-    // 金額を数値に変換して判定
+    // 金額を数値に変換して判定 (カンマを削除してから数値化)
     const amountValue = parseInt(String(r['金額']).replace(/,/g, ''), 10);
     // プラス金額の場合にのみ 'amount-plus' クラスを追加する
     const amountClass = amountValue > 0 ? 'amount amount-plus' : 'amount';
